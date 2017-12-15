@@ -1,36 +1,39 @@
 package tp.entities;
 
 
-import java.sql.Date;
+import java.util.Date;
 
-/*
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
-import org.hibernate.validator.constraints.NotBlank;
-*/
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-//@Entity
-//@SequenceGenerator(name = "seq_book", sequenceName = "seq_book", initialValue = 1, allocationSize = 1)
+
+@Entity
+@Table(name="books")
+@SequenceGenerator(name = "books_id_seq", sequenceName = "books_id_seq", initialValue = 0, allocationSize = 1)
 public class Book {
-	//@Id
-	//@GeneratedValue(generator = "seq_book")
-	private Integer id;
-	
-	//@Column
-	//@NotBlank
+	@Column(name="title")
 	private String title;
 	
-	//@Column
+	@Column(name = "nb_pages")
 	private Integer nbPages;
 	
-	//@Column
+	@Column(name="author")
 	private String author;
 	
-	//@Column
+	@Column(name = "publication_date")
+	@Temporal(TemporalType.DATE)
 	private Date publicationDate;
+	
+	@Id
+	@GeneratedValue(generator = "books_id_seq")
+	@Column(name="id")
+	private Long id;
 
 	public Book () {}
 	
@@ -41,7 +44,30 @@ public class Book {
 		this.publicationDate = publicationDate;
 	}
 	
-	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Book other = (Book) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
 
 	@Override
 	public String toString() {
@@ -49,8 +75,8 @@ public class Book {
 				+ ", publicationDate=" + publicationDate + "]";
 	}
 
-	public Integer getId() {return id;}
-	public void setId(Integer id) {this.id = id;}
+	public Long getId() {return id;}
+	public void setId(Long id) {this.id = id;}
 	public String getTitle() {return title;}
 	public void setTitle(String title) {this.title = title;}
 	public Integer getNbPages() {return nbPages;}

@@ -7,57 +7,55 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import tp.entities.Book;
-import tp.repository.BookDAO;
+import tp.repository.BookRepository;
+import tp.utils.BookListResultSet;
+import tp.utils.BookToCSV;
 
 @Service
 @Transactional
 public class BookService {
 	@Autowired
-	private BookDAO dao;
+	private BookRepository dao;
 	
 	public BookService () {}
 	
-	public int rowsNumber () {
+	public long rowsNumber () {
 		return dao.rowsNumber();
 	}
 	
 	public List<Book> allBooks () {
-		return dao.allBooks();
+		return dao.getAll();
+	}
+	
+	public List<Book> booksFromAuthor(String... authors) {
+		return dao.booksFromAuthor(authors);
+	}
+	
+	public List<String> getAuthors() {
+		return dao.getAuthors();
 	}
 	
 	public void insert3 (Book book1, Book book2, Book book3) {
-		book1.setId(dao.nextSeq());
-		dao.insert(book1);
-		book2.setId(dao.nextSeq());
-		dao.insert(book2);
-		book3.setId(dao.nextSeq());
-		dao.insert(book3);
-	}
-	
-	public void insert3SameId (Book book1, Book book2, Book book3) {
-		try {
-			book1.setId(dao.nextSeq());
-			dao.insert(book1);
-			book2.setId(book1.getId());
-			dao.insert(book2);
-			book3.setId(book2.getId());
-			dao.insert(book3);
-		} catch (Exception e) {}		
+		dao.add(book1);
+		dao.add(book2);
+		dao.add(book3);
 	}
 	
 	public void insert3Sleep (Book book1, Book book2, Book book3) {
-		book1.setId(dao.nextSeq());
-		dao.insert(book1);
-		book2.setId(dao.nextSeq());
-		dao.insert(book2);
-		book3.setId(dao.nextSeq());
-		dao.insert(book3);
+		dao.add(book1);
+		dao.add(book2);
+		dao.add(book3);
 		try {Thread.sleep(10000);} catch (InterruptedException e) {}
+	}
+	
+	public void allBooksToCSV () {
+		BookListResultSet bookList = new BookListResultSet();
+		BookToCSV.booksToCSV(dao.allBooksSet(bookList));
 	}
 	
 	public void insert(Book book) {
 		book.setId(dao.nextSeq());
-		dao.insert(book);
+		dao.add(book);
 	}
 	
 	public void update(Book book) {
@@ -66,5 +64,9 @@ public class BookService {
 	
 	public void delete(Book book) {
 		dao.delete(book);
+	}
+	
+	public Book getById (Long id) {
+		return dao.findById(id);
 	}
 }
